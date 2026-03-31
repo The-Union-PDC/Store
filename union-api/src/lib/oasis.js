@@ -120,10 +120,12 @@ async function getHolon(id) {
   return api('get', `/data/load-holon/${id}`);
 }
 
-async function searchHolons({ name, holonType } = {}) {
+async function searchHolons({ name, holonType, avatarId } = {}) {
   return api('post', '/data/load-all-holons', {
     holonType: holonType ?? 'All',
-    loadChildren: false
+    loadChildren: false,
+    ...(avatarId ? { avatarId } : {}),
+    ...(name ? { name } : {})
   });
 }
 

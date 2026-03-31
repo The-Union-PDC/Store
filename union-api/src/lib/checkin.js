@@ -17,8 +17,9 @@ const oasis = require('./oasis');
 const { getMemberByFingerprint, canAwardSession, recordSession } = require('./localDb');
 const { sendNotification } = require('./notifier');
 
-// Karma per session — maps to "10 tokens" in our design
-const SESSION_KARMA_TYPE = 'BeInspiring'; // closest positive type for "showing up"
+// Karma awarded per session (= "10 Union tokens" in the design doc)
+const SESSION_TOKENS    = 10;
+const SESSION_KARMA_TYPE = 'BeInspiring'; // closest positive OASIS karma type for "showing up"
 
 // Session milestones that trigger STAR quest completion
 // questId must match the quest created by seedQuests.js
@@ -31,13 +32,14 @@ const SESSION_MILESTONES = [
 ];
 
 async function processCheckin({ fingerprintId, avatarId: directAvatarId, chapter = 'PDC', source = 'fingerprint' }) {
-  // 1. Resolve member
+  // 1. Resolve member — declare at function scope so it's accessible in the notification block
   let avatarId = directAvatarId;
   let memberName = 'Member';
   let memberPhone = null;
+  let member = null;
 
   if (!avatarId && fingerprintId) {
-    const member = await getMemberByFingerprint(fingerprintId);
+    member = await getMemberByFingerprint(fingerprintId);
     if (!member) {
       return { skipped: true, reason: `No OASIS avatar linked to fingerprintId ${fingerprintId}` };
     }
