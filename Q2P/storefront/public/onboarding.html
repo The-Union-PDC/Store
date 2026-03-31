@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>The Union — Fighter Passport Activation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold:    #f5c842;
+      --amber:   #c4906a;
+      --amber2:  #e8b48c;
+      --ember:   #ff8c42;
+      --void:    #020309;
+      --space:   #060810;
+      --panel:   rgba(6, 8, 16, 0.92);
+      --panel2:  rgba(10, 12, 22, 0.96);
+      --border:  rgba(245, 200, 66, 0.18);
+      --border2: rgba(245, 200, 66, 0.42);
+      --text:    #e8e4d8;
+      --muted:   #5a5248;
+      --green:   #39d98a;
+      --red:     #ff4444;
+      --mono: 'Share Tech Mono', ui-monospace, monospace;
+      --display: 'Orbitron', sans-serif;
+      --serif: 'Newsreader', Georgia, serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--void);
+      color: var(--text);
+      font-family: var(--mono);
+      overflow: hidden;
+    }
+
+    /* ── Scanlines ─────────────────────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ── 3D Canvas ─────────────────────────────────────────────────────── */
+    #bg-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    /* ── HUD Top Bar ───────────────────────────────────────────────────── */
+    #hud-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 1.5rem;
+      background: rgba(2, 3, 9, 0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      font-size: 0.7rem; letter-spacing: 0.1em;
+    }
+    .hud-brand {
+      font-family: var(--display);
+      font-weight: 700; font-size: 0.78rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+    }
+    .hud-sep { color: var(--border2); }
+    .hud-phase { color: var(--muted); }
+    #hud-clock {
+      margin-left: auto;
+      color: var(--amber2);
+      font-size: 0.68rem;
+    }
+    .hud-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse-green 2s ease-in-out infinite;
+      margin-left: 0.3rem;
+    }
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+
+    /* ── Progress dots ─────────────────────────────────────────────────── */
+    #progress-track {
+      position: fixed;
+      top: 2.6rem; left: 50%; transform: translateX(-50%);
+      z-index: 20;
+      display: flex; gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+    }
+    .p-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(245,200,66,0.2);
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .p-dot.active  {
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+      transform: scale(1.5);
+    }
+    .p-dot.done {
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* ── Centre card ───────────────────────────────────────────────────── */
+    #stage {
+      position: fixed; inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      width: min(520px, calc(100vw - 3rem));
+      padding: 2.2rem 2rem;
+      background: var(--panel2);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      box-shadow:
+        0 0 60px rgba(245,200,66,0.06),
+        0 20px 60px rgba(0,0,0,0.8),
+        inset 0 0 0 1px rgba(245,200,66,0.04);
+      backdrop-filter: blur(20px);
+      animation: card-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .step.active { display: flex; }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .step-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    .step-num { color: var(--muted); }
+
+    .step h2 {
+      font-family: var(--display);
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+
+    .step p, .step .sub {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      text-align: center;
+    }
+
+    /* ── Input row ─────────────────────────────────────────────────────── */
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .hud-input {
+      flex: 1;
+      background: rgba(245,200,66,0.04);
+      border: 1px solid var(--border2);
+      border-radius: 1px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .hud-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(245,200,66,0.12);
+    }
+    .hud-input::placeholder { color: var(--muted); }
+
+    /* ── Buttons ───────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.6rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: #020309;
+      font-weight: 700;
+    }
+    .btn-primary:hover {
+      background: #fff06a;
+      box-shadow: 0 0 20px rgba(245,200,66,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--amber2);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    /* ── Scanning animation ────────────────────────────────────────────── */
+    #scan-block {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .scan-ring {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      animation: spin 1s linear infinite;
+      position: relative;
+    }
+    .scan-ring::after {
+      content: '⚔';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      animation: counter-spin 1s linear infinite;
+      color: var(--amber2);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes counter-spin { to { transform: rotate(-360deg); } }
+
+    .scan-log {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+      min-height: 1.2rem;
+    }
+    .scan-log .highlight { color: var(--amber2); }
+
+    /* ── Rank reveal ───────────────────────────────────────────────────── */
+    .rank-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1.5rem;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      background: rgba(245,200,66,0.04);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .rank-badge::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(245,200,66,0.08) 0%, transparent 70%);
+    }
+    .rank-icon {
+      font-size: 3rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 16px rgba(245,200,66,0.6));
+      animation: rank-pulse 2s ease-in-out infinite;
+    }
+    @keyframes rank-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(245,200,66,0.6)); }
+      50% { transform: scale(1.06); filter: drop-shadow(0 0 28px rgba(245,200,66,0.9)); }
+    }
+    .rank-title {
+      font-family: var(--display);
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .rank-title.rank-recruit  { color: #7eb8d4; text-shadow: 0 0 20px rgba(126,184,212,0.5); }
+    .rank-title.rank-fighter  { color: #e8b48c; text-shadow: 0 0 20px rgba(232,180,140,0.5); }
+    .rank-title.rank-veteran  { color: var(--gold); text-shadow: 0 0 20px rgba(245,200,66,0.6); }
+    .rank-title.rank-legend   { color: #ff8c42; text-shadow: 0 0 30px rgba(255,140,66,0.8); }
+    .rank-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ── Stats grid ────────────────────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      width: 100%;
+    }
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 0.75rem 0.5rem;
+      background: rgba(245,200,66,0.03);
+      border: 1px solid var(--border);
+      border-radius: 1px;
+    }
+    .stat-val {
+      font-family: var(--display);
+      font-size: clamp(1.1rem, 4vw, 1.6rem);
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .stat-lbl {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* ── Number counter animation ──────────────────────────────────────── */
+    .counting { animation: count-flash 0.1s ease-in-out; }
+    @keyframes count-flash { 0%, 100% { color: var(--gold); } 50% { color: #fff; } }
+
+    /* ── Progress bar ──────────────────────────────────────────────────── */
+    .tier-bar-wrap {
+      width: 100%;
+    }
+    .tier-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+    .tier-bar-label span { color: var(--amber2); }
+    .tier-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(245,200,66,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .tier-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--amber), var(--gold));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    /* ── Particles ─────────────────────────────────────────────────────── */
+    #particle-layer {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      font-size: 1.2rem;
+      animation: particle-float linear forwards;
+      opacity: 0;
+    }
+    @keyframes particle-float {
+      0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+      15%  { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
+    }
+
+    /* ── Dialogue ──────────────────────────────────────────────────────── */
+    #dialogue-wrap {
+      position: fixed;
+      bottom: 5rem; left: 50%; transform: translateX(-50%);
+      z-index: 20;
+      width: min(520px, calc(100vw - 3rem));
+    }
+    #dialogue-box {
+      background: var(--panel2);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      padding: 1rem 1.3rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.7);
+      display: none;
+    }
+    #dialogue-box.visible { display: block; }
+    #dialogue-box::before {
+      content: 'SYSTEM';
+      position: absolute;
+      top: -0.5rem; left: 1rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      color: var(--amber);
+      background: var(--panel2);
+      padding: 0 0.4rem;
+    }
+    #dialogue-text {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: var(--text);
+      min-height: 2rem;
+    }
+    #dialogue-cursor {
+      display: inline-block;
+      color: var(--gold);
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── Error state ───────────────────────────────────────────────────── */
+    .err-msg {
+      font-size: 0.75rem;
+      color: var(--red);
+      letter-spacing: 0.06em;
+      text-align: center;
+      min-height: 1rem;
+    }
+
+    /* ── Mobile ────────────────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .step { padding: 1.6rem 1.3rem; gap: 1rem; }
+      #dialogue-wrap { bottom: 1rem; }
+      #progress-track { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 3D Background -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Particles -->
+<div id="particle-layer"></div>
+
+<!-- HUD top bar -->
+<div id="hud-bar">
+  <span class="hud-brand">THE UNION</span>
+  <span class="hud-sep">|</span>
+  <span class="hud-phase">PASSPORT ACTIVATION</span>
+  <span id="hud-clock"></span>
+  <div class="hud-dot"></div>
+</div>
+
+<!-- Progress dots -->
+<div id="progress-track">
+  <div class="p-dot active" id="dot-0"></div>
+  <div class="p-dot" id="dot-1"></div>
+  <div class="p-dot" id="dot-2"></div>
+  <div class="p-dot" id="dot-3"></div>
+  <div class="p-dot" id="dot-4"></div>
+</div>
+
+<!-- ── Steps ───────────────────────────────────────────────────────────── -->
+<div id="stage">
+
+  <!-- Step 0: Welcome -->
+  <div class="step active" id="step-0">
+    <div class="step-label">
+      <span>Fighter Passport</span>
+      <span class="step-num">01 / 05</span>
+    </div>
+    <h2>Activate Your<br>Fighter Passport</h2>
+    <p>Your training record, rank, and Union tokens — all in one place. Let's get you set up.</p>
+    <button class="btn btn-primary" onclick="goTo(1)">BEGIN ACTIVATION ⚔</button>
+    <button class="btn btn-ghost" style="font-size:0.7rem;" onclick="window.location='/fighter-passport.html'">Already have a passport? View it →</button>
+  </div>
+
+  <!-- Step 1: Identify -->
+  <div class="step" id="step-1">
+    <div class="step-label">
+      <span>Member Lookup</span>
+      <span class="step-num">02 / 05</span>
+    </div>
+    <h2>Identify Yourself,<br>Fighter</h2>
+    <p class="sub">Enter the name or email you trained under. We'll pull your records from the gym database.</p>
+    <div class="input-row">
+      <input class="hud-input" type="text" id="member-input"
+        placeholder="Name or email address"
+        autocomplete="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter') lookupMember()" />
+    </div>
+    <div class="err-msg" id="lookup-err"></div>
+    <div style="display:flex;gap:0.5rem;width:100%">
+      <button class="btn btn-ghost" onclick="goTo(0)" style="flex:0">← Back</button>
+      <button class="btn btn-primary" onclick="lookupMember()" id="lookup-btn" style="flex:1">
+        SEARCH RECORDS →
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Scanning -->
+  <div class="step" id="step-2">
+    <div class="step-label">
+      <span>Database Scan</span>
+      <span class="step-num">03 / 05</span>
+    </div>
+    <div id="scan-block">
+      <div class="scan-ring"></div>
+      <div class="scan-log" id="scan-log">Accessing gym records...</div>
+    </div>
+  </div>
+
+  <!-- Step 3: Rank Reveal -->
+  <div class="step" id="step-3">
+    <div class="step-label">
+      <span>Rank Classification</span>
+      <span class="step-num">04 / 05</span>
+    </div>
+
+    <div class="rank-badge" id="rank-badge">
+      <div class="rank-icon" id="rank-icon">⚔</div>
+      <div class="rank-title" id="rank-title">RECRUIT</div>
+      <div class="rank-sub" id="rank-sub">Loading...</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="stat-sessions">—</div>
+        <div class="stat-lbl">Sessions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-tokens">—</div>
+        <div class="stat-lbl">Tokens</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-quests">—</div>
+        <div class="stat-lbl">Quests</div>
+      </div>
+    </div>
+
+    <div class="tier-bar-wrap">
+      <div class="tier-bar-label">
+        <span>Progress to next rank</span>
+        <span id="tier-bar-pct">0%</span>
+      </div>
+      <div class="tier-bar-bg">
+        <div class="tier-bar-fill" id="tier-bar"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="goTo(4)" style="width:100%">
+      CLAIM MY PASSPORT →
+    </button>
+  </div>
+
+  <!-- Step 4: Setup / Claim -->
+  <div class="step" id="step-4">
+    <div class="step-label">
+      <span>Activation Complete</span>
+      <span class="step-num">05 / 05</span>
+    </div>
+    <h2>Welcome to<br>The Union 🐯</h2>
+    <p>Your passport is live. Share your phone number to receive session notifications and token updates via WhatsApp.</p>
+
+    <div class="input-row">
+      <input class="hud-input" type="tel" id="phone-input"
+        placeholder="+52 984 123 4567  (optional)"
+        autocomplete="tel" />
+    </div>
+
+    <div style="display:flex;gap:0.5rem;width:100%;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="finishSetup()" style="flex:1">
+        ACTIVATE &amp; VIEW PASSPORT
+      </button>
+      <button class="btn btn-ghost" onclick="skipPhone()" style="flex:0;font-size:0.7rem">
+        Skip
+      </button>
+    </div>
+
+    <div class="err-msg" id="finish-err"></div>
+  </div>
+
+</div>
+
+<!-- Dialogue box -->
+<div id="dialogue-wrap">
+  <div id="dialogue-box">
+    <span id="dialogue-text"></span><span id="dialogue-cursor">_</span>
+  </div>
+</div>
+
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.160.0",
+    "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ── Config ──────────────────────────────────────────────────────────────────
+const UNION_API = window.UNION_API || 'https://union-api-production.up.railway.app';
+const SKYBOX_URL = 'https://images.blockadelabs.com/images/imagine/M3_Photoreal_equirectangular-jpg_An_ancient_Japanese_dojo_5598412201_15133914.jpg?ver=1';
+
+// ── 3D Rotating Dojo Background ──────────────────────────────────────────────
+const canvas = document.getElementById('bg-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 0.001);
+
+const geo = new THREE.SphereGeometry(50, 32, 16);
+geo.scale(-1, 1, 1);
+const tex = new THREE.TextureLoader().load(SKYBOX_URL);
+const mat = new THREE.MeshBasicMaterial({ map: tex });
+const sphere = new THREE.Mesh(geo, mat);
+scene.add(sphere);
+
+let autoRotateY = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  autoRotateY += 0.00015;
+  sphere.rotation.y = autoRotateY;
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// ── Clock ────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('hud-clock').textContent =
+    now.toLocaleTimeString('en-GB', { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Progress dots ────────────────────────────────────────────────────────────
+let currentStep = 0;
+window.goTo = function(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  for (let i = 0; i < 5; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.remove('active', 'done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+  currentStep = n;
+  document.getElementById(`step-${n}`).classList.add('active');
+};
+
+// ── Typewriter dialogue ───────────────────────────────────────────────────────
+let typeTimer = null;
+function typeWrite(msg, speed = 28) {
+  const box    = document.getElementById('dialogue-box');
+  const el     = document.getElementById('dialogue-text');
+  if (typeTimer) clearInterval(typeTimer);
+  box.classList.add('visible');
+  el.textContent = '';
+  let i = 0;
+  typeTimer = setInterval(() => {
+    if (i < msg.length) {
+      el.textContent += msg[i++];
+    } else {
+      clearInterval(typeTimer);
+      typeTimer = null;
+    }
+  }, speed);
+}
+
+function hideDialogue() {
+  document.getElementById('dialogue-box').classList.remove('visible');
+}
+
+// ── Particles ────────────────────────────────────────────────────────────────
+function burst(icons = ['⚔','🔥','★','▲'], count = 12) {
+  const layer = document.getElementById('particle-layer');
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.textContent = icons[Math.floor(Math.random() * icons.length)];
+    el.style.left = `${20 + Math.random() * 60}vw`;
+    el.style.top  = `${30 + Math.random() * 40}vh`;
+    const dur = 1.2 + Math.random() * 1.2;
+    el.style.animationDuration = `${dur}s`;
+    el.style.animationDelay   = `${Math.random() * 0.5}s`;
+    layer.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 0.6) * 1000);
+  }
+}
+
+// ── Counter animation ────────────────────────────────────────────────────────
+function animateCount(el, target, duration = 1600) {
+  const start = Date.now();
+  const tick = () => {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    el.classList.add('counting');
+    setTimeout(() => el.classList.remove('counting'), 80);
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(tick);
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+let memberData = null;
+
+// ── Step 1 → 2: Member Lookup ────────────────────────────────────────────────
+window.lookupMember = async function() {
+  const query = document.getElementById('member-input').value.trim();
+  if (!query) {
+    document.getElementById('lookup-err').textContent = 'Please enter your name or email.';
+    return;
+  }
+  document.getElementById('lookup-err').textContent = '';
+  document.getElementById('lookup-btn').disabled = true;
+
+  goTo(2);
+  runScanSequence(query);
+};
+
+const scanMessages = [
+  'Accessing gym records...',
+  'Scanning attendance database...',
+  'Verifying member identity...',
+  'Calculating training sessions...',
+  'Computing rank classification...',
+  'Loading passport template...',
+];
+
+async function runScanSequence(query) {
+  const logEl = document.getElementById('scan-log');
+  let msgIdx = 0;
+  const interval = setInterval(() => {
+    if (msgIdx < scanMessages.length - 1) {
+      logEl.innerHTML = scanMessages[msgIdx++];
+    }
+  }, 420);
+
+  try {
+    // Try to look up the member in the union-api
+    const res = await fetch(`${UNION_API}/api/members/lookup?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    clearInterval(interval);
+
+    if (data.found) {
+      memberData = data;
+      logEl.innerHTML = `<span class="highlight">MATCH FOUND — ${(data.name || query).toUpperCase()}</span>`;
+    } else {
+      // No record found — create a new member stub with the entered name
+      memberData = {
+        found: false,
+        name: query,
+        sessions: 0,
+        tokens: 0,
+        questsDone: 0,
+        tier: 'recruit',
+        memberSince: '—',
+        isNew: true
+      };
+      logEl.innerHTML = `<span class="highlight">NEW MEMBER — ${query.toUpperCase()}</span>`;
+    }
+
+    await delay(900);
+    showRankReveal();
+  } catch (err) {
+    clearInterval(interval);
+    // Offline / API down — create a demo member
+    memberData = {
+      found: false,
+      name: query,
+      sessions: 0,
+      tokens: 0,
+      questsDone: 0,
+      tier: 'recruit',
+      isNew: true
+    };
+    logEl.innerHTML = `<span class="highlight">OFFLINE MODE — ${query.toUpperCase()}</span>`;
+    await delay(900);
+    showRankReveal();
+  }
+}
+
+// ── Step 2 → 3: Rank Reveal ───────────────────────────────────────────────────
+const TIERS = [
+  { tier: 'recruit', min: 0,   max: 49,  icon: '🥊', label: 'RECRUIT',  colour: 'rank-recruit' },
+  { tier: 'fighter', min: 50,  max: 199, icon: '⚔',  label: 'FIGHTER',  colour: 'rank-fighter' },
+  { tier: 'veteran', min: 200, max: 499, icon: '🔱', label: 'VETERAN',  colour: 'rank-veteran' },
+  { tier: 'legend',  min: 500, max: Infinity, icon: '🦁', label: 'LEGEND', colour: 'rank-legend' },
+];
+
+function getTier(sessions) {
+  return TIERS.find(t => sessions >= t.min && sessions <= t.max) || TIERS[0];
+}
+
+function showRankReveal() {
+  goTo(3);
+
+  const sessions   = memberData?.sessions  || 0;
+  const tokens     = memberData?.tokens    || 0;
+  const questsDone = memberData?.questsDone || 0;
+  const tierInfo   = getTier(sessions);
+
+  // Badge
+  document.getElementById('rank-icon').textContent  = tierInfo.icon;
+  const titleEl = document.getElementById('rank-title');
+  titleEl.textContent = tierInfo.label;
+  titleEl.className = `rank-title ${tierInfo.colour}`;
+  document.getElementById('rank-sub').textContent =
+    memberData?.isNew
+      ? 'New member — welcome to the family'
+      : `Member since ${memberData?.memberSince || '—'}`;
+
+  // Stats
+  setTimeout(() => {
+    animateCount(document.getElementById('stat-sessions'), sessions);
+    animateCount(document.getElementById('stat-tokens'),   tokens,   1200);
+    animateCount(document.getElementById('stat-quests'),   questsDone, 1000);
+  }, 400);
+
+  // Progress bar
+  const nextTier   = TIERS[Math.min(TIERS.findIndex(t => t.tier === tierInfo.tier) + 1, TIERS.length - 1)];
+  const sessionsInTier = sessions - tierInfo.min;
+  const tierRange      = nextTier.min - tierInfo.min;
+  const pct = tierInfo.tier === 'legend' ? 100 : Math.round((sessionsInTier / tierRange) * 100);
+  document.getElementById('tier-bar-pct').textContent = `${pct}%`;
+  setTimeout(() => {
+    document.getElementById('tier-bar').style.width = `${pct}%`;
+  }, 600);
+
+  // Particles + dialogue
+  setTimeout(() => {
+    burst(
+      tierInfo.tier === 'legend'  ? ['🦁','🔥','★','⚡'] :
+      tierInfo.tier === 'veteran' ? ['🔱','★','⚔','💛'] :
+      tierInfo.tier === 'fighter' ? ['⚔','🥊','★','▲'] :
+      ['🥊','★','▲','·'],
+      16
+    );
+  }, 300);
+
+  const dialogue = memberData?.isNew
+    ? `Welcome to The Union, ${memberData.name}. Your journey starts now — every session earns tokens and moves you closer to your next rank.`
+    : sessions >= 500 ? `${memberData.name}... a Legend. The dojo remembers every drop of sweat. ${sessions} sessions is not effort — it's a way of life.`
+    : sessions >= 200 ? `${memberData.name}. ${sessions} sessions. You've earned the Veteran rank. The younger fighters look up to you.`
+    : sessions >= 50  ? `${memberData.name}, Fighter rank confirmed. ${sessions} sessions on record. Keep pushing.`
+    : `${memberData.name} — Recruit rank. Everyone starts here. Put in the sessions and your rank will follow.`;
+
+  setTimeout(() => typeWrite(dialogue), 800);
+}
+
+// ── Step 4: Finish setup ──────────────────────────────────────────────────────
+window.finishSetup = async function() {
+  const phone = document.getElementById('phone-input').value.trim();
+  document.getElementById('finish-err').textContent = '';
+
+  if (memberData?.avatarId) {
+    // Try to save phone to union-api
+    try {
+      await fetch(`${UNION_API}/api/members/${memberData.avatarId}/phone`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+    } catch {}
+  }
+
+  viewPassport();
+};
+
+window.skipPhone = function() {
+  viewPassport();
+};
+
+function viewPassport() {
+  hideDialogue();
+  burst(['🐯','⚔','★','🔥'], 20);
+  const avatarId = memberData?.avatarId || 'demo';
+  setTimeout(() => {
+    window.location = `/fighter-passport.html?id=${avatarId}&name=${encodeURIComponent(memberData?.name || '')}`;
+  }, 600);
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────────
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Initial dialogue
+setTimeout(() => {
+  typeWrite('The Union Fighter Passport — your permanent record of dedication. Activate yours to track sessions, earn tokens, and claim your rank.');
+}, 800);
+</script>
+
+</body>
+</html>

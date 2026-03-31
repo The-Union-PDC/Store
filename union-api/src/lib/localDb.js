@@ -41,7 +41,21 @@ async function getMemberByFingerprint(fingerprintId) {
 
 async function getAllMembers() {
   const db = await getDb();
-  return db.data.members;
+  // Return as array so routes can .find() easily
+  return Object.entries(db.data.members).map(([fingerprintId, m]) => ({
+    fingerprintId,
+    ...m
+  }));
+}
+
+async function updateMemberPhone(avatarId, phone) {
+  const db = await getDb();
+  for (const [fpId, m] of Object.entries(db.data.members)) {
+    if (m.avatarId === avatarId) {
+      db.data.members[fpId].phone = phone;
+    }
+  }
+  await db.write();
 }
 
 /**
@@ -75,4 +89,4 @@ function todayKey() {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
-module.exports = { linkFingerprint, getMemberByFingerprint, getAllMembers, canAwardSession, recordSession };
+module.exports = { linkFingerprint, getMemberByFingerprint, getAllMembers, updateMemberPhone, canAwardSession, recordSession };
