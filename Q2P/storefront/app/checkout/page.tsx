@@ -91,17 +91,17 @@ function StepIndicator({ current }: { current: Step }) {
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-full border text-xs font-display tracking-wider transition-colors ${
                 i < currentIdx
-                  ? 'border-union-gold bg-union-gold text-union-black'
+                  ? 'border-muay-red bg-muay-red text-neutral-950'
                   : i === currentIdx
-                  ? 'border-union-gold text-union-gold'
-                  : 'border-union-muted/30 text-union-muted/50'
+                  ? 'border-muay-red text-muay-red'
+                  : 'border-neutral-500/30 text-neutral-500/50'
               }`}
             >
               {i < currentIdx ? '✓' : i + 1}
             </div>
             <span
               className={`mt-1 text-xs font-display tracking-widest ${
-                i <= currentIdx ? 'text-union-gold' : 'text-union-muted/40'
+                i <= currentIdx ? 'text-muay-red' : 'text-neutral-500/40'
               }`}
             >
               {s.label.toUpperCase()}
@@ -110,7 +110,7 @@ function StepIndicator({ current }: { current: Step }) {
           {i < steps.length - 1 && (
             <div
               className={`mx-3 h-px w-12 transition-colors ${
-                i < currentIdx ? 'bg-union-gold' : 'bg-union-muted/20'
+                i < currentIdx ? 'bg-muay-red' : 'bg-neutral-500/20'
               }`}
             />
           )}
@@ -141,8 +141,8 @@ function InputField({
 }) {
   return (
     <div className={half ? 'col-span-1' : 'col-span-2'}>
-      <label className="mb-1 block text-xs font-display tracking-widest text-union-muted">
-        {label.toUpperCase()}{required && <span className="ml-1 text-union-gold">*</span>}
+      <label className="mb-1 block text-xs font-display tracking-widest text-neutral-500">
+        {label.toUpperCase()}{required && <span className="ml-1 text-muay-red">*</span>}
       </label>
       <input
         type={type}
@@ -151,7 +151,7 @@ function InputField({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded border border-union-gold/20 bg-union-black px-3 py-2.5 text-sm text-union-text placeholder-union-muted/40 outline-none transition-colors focus:border-union-gold/60"
+        className="w-full rounded border border-muay-red/20 bg-neutral-950 px-3 py-2.5 text-sm text-white placeholder-neutral-500/40 outline-none transition-colors focus:border-muay-red/60"
       />
     </div>
   );
@@ -174,15 +174,15 @@ function SelectField({
 }) {
   return (
     <div className="col-span-2">
-      <label className="mb-1 block text-xs font-display tracking-widest text-union-muted">
-        {label.toUpperCase()}{required && <span className="ml-1 text-union-gold">*</span>}
+      <label className="mb-1 block text-xs font-display tracking-widest text-neutral-500">
+        {label.toUpperCase()}{required && <span className="ml-1 text-muay-red">*</span>}
       </label>
       <select
         name={name}
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full rounded border border-union-gold/20 bg-union-black px-3 py-2.5 text-sm text-union-text outline-none transition-colors focus:border-union-gold/60"
+        className="w-full rounded border border-muay-red/20 bg-neutral-950 px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-muay-red/60"
       >
         <option value="">Select country…</option>
         {options.map((o) => (
@@ -199,8 +199,8 @@ function OrderSummary({ cart }: { cart: CartSummary | null }) {
   if (!cart) return null;
   const currency = cart.currency_code ?? 'usd';
   return (
-    <div className="rounded-xl border border-union-gold/20 bg-union-panel p-5">
-      <h3 className="mb-4 font-display tracking-widest text-union-gold text-sm">ORDER SUMMARY</h3>
+    <div className="rounded-xl border border-muay-red/20 bg-neutral-900 p-5">
+      <h3 className="mb-4 font-display tracking-widest text-muay-red text-sm">ORDER SUMMARY</h3>
       <ul className="space-y-3 text-sm">
         {cart.lines?.map((line) => (
           <li key={line.id} className="flex items-start gap-3">
@@ -209,34 +209,34 @@ function OrderSummary({ cart }: { cart: CartSummary | null }) {
               <img
                 src={line.thumbnail}
                 alt={line.title}
-                className="h-12 w-12 rounded object-cover border border-union-gold/10"
+                className="h-12 w-12 rounded object-cover border border-muay-red/10"
               />
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-union-text truncate">{line.title}</p>
+              <p className="text-white truncate">{line.title}</p>
               {line.variant_title && line.variant_title !== 'Default Variant' && (
-                <p className="text-xs text-union-muted">{line.variant_title}</p>
+                <p className="text-xs text-neutral-500">{line.variant_title}</p>
               )}
-              <p className="text-xs text-union-muted">Qty: {line.quantity}</p>
+              <p className="text-xs text-neutral-500">Qty: {line.quantity}</p>
             </div>
-            <p className="text-union-gold text-xs whitespace-nowrap">
+            <p className="text-muay-red text-xs whitespace-nowrap">
               {fmt(line.total, currency)}
             </p>
           </li>
         ))}
       </ul>
-      <div className="mt-4 border-t border-union-gold/10 pt-4 space-y-1 text-sm">
-        <div className="flex justify-between text-union-muted">
+      <div className="mt-4 border-t border-muay-red/10 pt-4 space-y-1 text-sm">
+        <div className="flex justify-between text-neutral-500">
           <span>Subtotal</span>
           <span>{fmt(cart.subtotal, currency)}</span>
         </div>
-        <div className="flex justify-between text-union-muted">
+        <div className="flex justify-between text-neutral-500">
           <span>Shipping</span>
           <span className="text-xs">Calculated at next step</span>
         </div>
-        <div className="flex justify-between font-semibold text-union-text pt-2 border-t border-union-gold/10">
+        <div className="flex justify-between font-semibold text-white pt-2 border-t border-muay-red/10">
           <span>Total</span>
-          <span className="text-union-gold">{fmt(cart.total, currency)}</span>
+          <span className="text-muay-red">{fmt(cart.total, currency)}</span>
         </div>
       </div>
     </div>
@@ -408,28 +408,28 @@ export default function CheckoutPage() {
   // ─── Confirmed ──────────────────────────────────────────────────────────────
   if (step === 'confirmed') {
     return (
-      <div className="min-h-screen bg-union-black px-4 py-16">
+      <div className="min-h-screen bg-neutral-950 px-4 py-16">
         <div className="mx-auto max-w-lg text-center">
           <div className="mb-6 text-5xl">🐯</div>
-          <h1 className="font-display tracking-[0.2em] text-3xl text-union-gold mb-3">
+          <h1 className="font-display tracking-[0.2em] text-3xl text-muay-red mb-3">
             ORDER CONFIRMED
           </h1>
-          <p className="text-union-muted text-sm mb-2">
+          <p className="text-neutral-500 text-sm mb-2">
             Thank you, {address.first_name}. Your order has been placed.
           </p>
           {orderId && (
-            <p className="text-xs text-union-muted/60 mb-8 font-mono">
+            <p className="text-xs text-neutral-500/60 mb-8 font-mono">
               Order ID: {orderId}
             </p>
           )}
-          <p className="text-union-muted text-sm mb-10">
-            A confirmation will be sent to <span className="text-union-text">{address.email}</span>.
+          <p className="text-neutral-500 text-sm mb-10">
+            A confirmation will be sent to <span className="text-white">{address.email}</span>.
             We&apos;ll reach out when your gear is on its way.
           </p>
           <div className="flex flex-col gap-3 items-center">
             <Link
               href="/"
-              className="rounded border border-union-gold/40 px-8 py-2.5 font-display tracking-widest text-sm text-union-gold transition-colors hover:bg-union-gold hover:text-union-black"
+              className="rounded border border-muay-red/40 px-8 py-2.5 font-display tracking-widest text-sm text-muay-red transition-colors hover:bg-muay-red hover:text-neutral-950"
             >
               BACK TO STORE
             </Link>
@@ -441,15 +441,15 @@ export default function CheckoutPage() {
 
   // ─── Main layout ────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-union-black">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <div className="border-b border-union-gold/20 bg-union-panel px-4 py-3">
+      <div className="border-b border-muay-red/20 bg-neutral-900 px-4 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <LogoSquare size="sm" />
-            <span className="font-display tracking-[0.2em] text-union-gold text-sm">THE UNION</span>
+            <span className="font-display tracking-[0.2em] text-muay-red text-sm">THE UNION</span>
           </Link>
-          <span className="font-display tracking-widest text-union-muted text-xs">CHECKOUT</span>
+          <span className="font-display tracking-widest text-neutral-500 text-xs">CHECKOUT</span>
         </div>
       </div>
 
@@ -460,7 +460,7 @@ export default function CheckoutPage() {
             <StepIndicator current={step} />
 
             {error && (
-              <div className="mb-6 rounded border border-union-red/40 bg-union-red/10 px-4 py-3 text-sm text-red-300">
+              <div className="mb-6 rounded border border-red-900/40 bg-red-900/10 px-4 py-3 text-sm text-red-300">
                 {error}
               </div>
             )}
@@ -468,7 +468,7 @@ export default function CheckoutPage() {
             {/* ── Step 1: Address ── */}
             {step === 'address' && (
               <form onSubmit={submitAddress}>
-                <h2 className="mb-6 font-display tracking-[0.18em] text-xl text-union-text">
+                <h2 className="mb-6 font-display tracking-[0.18em] text-xl text-white">
                   CONTACT & SHIPPING
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -564,7 +564,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="mt-8 w-full rounded bg-union-gold py-3 font-display tracking-widest text-sm text-union-black transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="mt-8 w-full rounded bg-muay-red py-3 font-display tracking-widest text-sm text-neutral-950 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {loading ? 'SAVING…' : 'CONTINUE TO SHIPPING →'}
                 </button>
@@ -575,32 +575,32 @@ export default function CheckoutPage() {
             {step === 'shipping' && (
               <form onSubmit={submitShipping}>
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="font-display tracking-[0.18em] text-xl text-union-text">
+                  <h2 className="font-display tracking-[0.18em] text-xl text-white">
                     SHIPPING METHOD
                   </h2>
                   <button
                     type="button"
                     onClick={() => { setStep('address'); setError(''); }}
-                    className="text-xs text-union-muted underline-offset-2 hover:underline"
+                    className="text-xs text-neutral-500 underline-offset-2 hover:underline"
                   >
                     ← Edit address
                   </button>
                 </div>
 
                 {/* Address recap */}
-                <div className="mb-6 rounded border border-union-gold/10 bg-union-panel px-4 py-3 text-sm text-union-muted">
+                <div className="mb-6 rounded border border-muay-red/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-500">
                   <p>{address.first_name} {address.last_name} · {address.email}</p>
                   <p>{address.address_1}, {address.city}, {address.country_code.toUpperCase()}</p>
                 </div>
 
                 {shippingOptions.length === 0 ? (
-                  <div className="rounded border border-union-gold/20 bg-union-panel p-6 text-center">
-                    <p className="text-union-muted text-sm">
+                  <div className="rounded border border-muay-red/20 bg-neutral-900 p-6 text-center">
+                    <p className="text-neutral-500 text-sm">
                       No shipping options available for this address yet.
                     </p>
-                    <p className="mt-2 text-xs text-union-muted/60">
+                    <p className="mt-2 text-xs text-neutral-500/60">
                       Contact us at{' '}
-                      <a href="mailto:jeff.sanchez91@gmail.com" className="text-union-gold underline">
+                      <a href="mailto:jeff.sanchez91@gmail.com" className="text-muay-red underline">
                         jeff.sanchez91@gmail.com
                       </a>{' '}
                       to arrange delivery.
@@ -613,21 +613,21 @@ export default function CheckoutPage() {
                         key={opt.id}
                         className={`flex cursor-pointer items-center justify-between rounded border px-4 py-4 transition-colors ${
                           selectedShipping === opt.id
-                            ? 'border-union-gold bg-union-gold/5'
-                            : 'border-union-gold/20 hover:border-union-gold/40'
+                            ? 'border-muay-red bg-muay-red/5'
+                            : 'border-muay-red/20 hover:border-muay-red/40'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
                             className={`h-4 w-4 rounded-full border-2 transition-colors ${
                               selectedShipping === opt.id
-                                ? 'border-union-gold bg-union-gold'
-                                : 'border-union-muted/40'
+                                ? 'border-muay-red bg-muay-red'
+                                : 'border-neutral-500/40'
                             }`}
                           />
-                          <span className="text-sm text-union-text">{opt.name}</span>
+                          <span className="text-sm text-white">{opt.name}</span>
                         </div>
-                        <span className="text-sm text-union-gold">
+                        <span className="text-sm text-muay-red">
                           {opt.amount === 0 ? 'FREE' : fmt(opt.amount, opt.currency_code ?? 'usd')}
                         </span>
                         <input
@@ -646,7 +646,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={loading || (shippingOptions.length > 0 && !selectedShipping)}
-                  className="mt-8 w-full rounded bg-union-gold py-3 font-display tracking-widest text-sm text-union-black transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="mt-8 w-full rounded bg-muay-red py-3 font-display tracking-widest text-sm text-neutral-950 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {loading ? 'SAVING…' : 'CONTINUE TO PAYMENT →'}
                 </button>
@@ -657,20 +657,20 @@ export default function CheckoutPage() {
             {step === 'payment' && (
               <div>
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="font-display tracking-[0.18em] text-xl text-union-text">
+                  <h2 className="font-display tracking-[0.18em] text-xl text-white">
                     PAYMENT
                   </h2>
                   <button
                     type="button"
                     onClick={() => { setStep('shipping'); setError(''); }}
-                    className="text-xs text-union-muted underline-offset-2 hover:underline"
+                    className="text-xs text-neutral-500 underline-offset-2 hover:underline"
                   >
                     ← Edit shipping
                   </button>
                 </div>
 
                 {/* Address + shipping recap */}
-                <div className="mb-6 space-y-2 rounded border border-union-gold/10 bg-union-panel px-4 py-3 text-sm text-union-muted">
+                <div className="mb-6 space-y-2 rounded border border-muay-red/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-500">
                   <p>{address.first_name} {address.last_name} · {address.email}</p>
                   <p>{address.address_1}, {address.city}, {address.country_code.toUpperCase()}</p>
                   {selectedShipping && shippingOptions.length > 0 && (
@@ -680,14 +680,14 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
-                <div className="rounded border border-union-gold/20 bg-union-panel px-6 py-5 mb-6">
-                  <p className="font-display tracking-widest text-union-gold text-sm mb-3">
+                <div className="rounded border border-muay-red/20 bg-neutral-900 px-6 py-5 mb-6">
+                  <p className="font-display tracking-widest text-muay-red text-sm mb-3">
                     PAYMENT METHOD
                   </p>
-                  <p className="text-sm text-union-muted mb-1">
+                  <p className="text-sm text-neutral-500 mb-1">
                     Stripe payments are processed securely. By placing your order you confirm your details above are correct.
                   </p>
-                  <p className="text-xs text-union-muted/60">
+                  <p className="text-xs text-neutral-500/60">
                     If payment requires further action, our team will contact you at {address.email}.
                   </p>
                 </div>
@@ -695,14 +695,14 @@ export default function CheckoutPage() {
                 <button
                   onClick={placeOrder}
                   disabled={loading}
-                  className="w-full rounded bg-union-gold py-3.5 font-display tracking-widest text-sm text-union-black transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="w-full rounded bg-muay-red py-3.5 font-display tracking-widest text-sm text-neutral-950 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {loading ? 'PLACING ORDER…' : '🐯  PLACE ORDER'}
                 </button>
 
-                <p className="mt-4 text-center text-xs text-union-muted/50">
+                <p className="mt-4 text-center text-xs text-neutral-500/50">
                   By placing your order you agree to The Union&apos;s terms. Questions?{' '}
-                  <a href="mailto:jeff.sanchez91@gmail.com" className="text-union-gold underline">
+                  <a href="mailto:jeff.sanchez91@gmail.com" className="text-muay-red underline">
                     Contact us
                   </a>
                 </p>

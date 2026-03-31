@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 import MobileMenu from './mobile-menu';
 import Search from './search';
 
-const SITE_NAME = process.env.SITE_NAME ?? 'The Union';
+const SITE_NAME_JSX = <>The Union Muay Thai <span className="font-teko">&</span> Boxing</>;
 
 export default async function Navbar() {
   let menu: Awaited<ReturnType<typeof getMenu>> = [];
@@ -20,7 +20,7 @@ export default async function Navbar() {
   if (!Array.isArray(menu)) menu = [];
 
   return (
-    <nav className="relative flex items-center justify-between border-b border-union-gold/20 bg-union-black/95 px-4 py-3 backdrop-blur-sm lg:px-6">
+    <nav className="relative flex items-center justify-between border-b border-muay-red/20 bg-neutral-950/95 px-4 py-3 backdrop-blur-sm lg:px-6">
       <div className="block flex-none md:hidden">
         <MobileMenu menu={menu} />
       </div>
@@ -32,8 +32,8 @@ export default async function Navbar() {
             className="mr-2 flex w-full items-center justify-center gap-3 md:w-auto lg:mr-6"
           >
             <LogoSquare />
-            <div className="flex-none font-display text-xl tracking-[0.15em] text-union-gold md:hidden lg:block">
-              {SITE_NAME}
+            <div className="flex-none font-display text-xl tracking-[0.15em] text-muay-red md:hidden lg:block">
+              {SITE_NAME_JSX}
             </div>
           </Link>
           {menu.length ? (
@@ -42,7 +42,7 @@ export default async function Navbar() {
                 <li key={item.title}>
                   <Link
                     href={item.path}
-                    className="font-display tracking-widest text-union-muted transition-colors hover:text-union-gold"
+                    className="font-display tracking-widest text-neutral-500 transition-colors hover:text-muay-red"
                   >
                     {item.title.toUpperCase()}
                   </Link>

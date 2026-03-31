@@ -14,24 +14,24 @@ type HomeData = {
   footerMenu: Menu[];
 };
 
-const SITE_NAME = 'The Union';
+const SITE_NAME = 'The Union Muay Thai & Boxing Gym';
 
 const EMPTY_GRID = (
   <section className="mx-auto max-w-screen-2xl px-4 pb-16 pt-16">
-    <div className="rounded-xl border border-union-gold/20 bg-union-panel p-16 text-center">
+    <div className="rounded-xl border border-muay-red/20 bg-neutral-900 p-16 text-center">
       <div className="mb-6 flex justify-center">
-        <span className="font-display text-6xl tracking-widest text-union-gold">THE UNION</span>
+        <span className="font-display text-5xl md:text-6xl tracking-widest text-muay-red">THE UNION MUAY THAI <span className="font-teko">&</span> BOXING GYM</span>
       </div>
-      <p className="mb-3 font-display tracking-widest text-union-muted text-sm">
-        PLAYA DEL CARMEN · EST. MEXICO
+      <p className="mb-3 font-display tracking-widest text-neutral-500 text-sm">
+        EST. 2012 · OLD-SCHOOL MUAY THAI <span className="font-teko">&</span> BOXING · PLAYA DEL CARMEN
       </p>
-      <div className="mx-auto mt-8 h-px w-24 bg-union-gold/40" />
-      <p className="mt-8 text-sm text-union-muted">
+      <div className="mx-auto mt-8 h-px w-24 bg-muay-red/40" />
+      <p className="mt-8 text-sm text-neutral-500">
         Gear dropping soon. Connect the store to see products.
       </p>
       <Link
         href="/search"
-        className="mt-6 inline-block rounded border border-union-gold/40 px-6 py-2 font-display tracking-widest text-sm text-union-gold transition-colors hover:bg-union-gold hover:text-union-black"
+        className="mt-6 inline-block rounded border border-muay-red/40 px-6 py-2 font-display tracking-widest text-sm text-muay-red transition-colors hover:bg-muay-red hover:text-neutral-950"
       >
         BROWSE ALL GEAR
       </Link>
@@ -84,9 +84,9 @@ export default function HomePageClient() {
   if (data === null) {
     return (
       <section className="mx-auto max-w-screen-2xl px-4 pb-16 pt-16">
-        <div className="rounded-xl border border-union-gold/20 bg-union-panel p-16 text-center">
-          <div className="mx-auto h-1 w-16 animate-pulse rounded bg-union-gold/40" />
-          <p className="mt-6 font-display tracking-widest text-union-muted text-sm">LOADING GEAR…</p>
+        <div className="rounded-xl border border-muay-red/20 bg-neutral-900 p-16 text-center">
+          <div className="mx-auto h-1 w-16 animate-pulse rounded bg-muay-red/40" />
+          <p className="mt-6 font-display tracking-widest text-neutral-500 text-sm">LOADING GEAR…</p>
         </div>
       </section>
     );
@@ -103,9 +103,9 @@ export default function HomePageClient() {
   return (
     <>
       {/* Hero banner */}
-      <div className="border-b border-union-gold/20 bg-union-panel px-4 py-6 text-center">
-        <p className="font-display tracking-[0.3em] text-union-muted text-xs">
-          PLAYA DEL CARMEN &nbsp;·&nbsp; OFFICIAL STORE &nbsp;·&nbsp; EST. MEXICO
+      <div className="border-b border-muay-red/20 bg-neutral-900 px-4 py-6 text-center">
+        <p className="font-display tracking-[0.3em] text-neutral-500 text-xs">
+          EST. 2012 &nbsp;·&nbsp; OLD-SCHOOL MUAY THAI <span className="font-teko">&</span> BOXING &nbsp;·&nbsp; OFFICIAL STORE
         </p>
       </div>
 
@@ -152,34 +152,34 @@ export default function HomePageClient() {
       )}
 
       {/* Union info strip */}
-      <div className="border-y border-union-gold/20 bg-union-panel py-8 px-4">
+      <div className="border-y border-muay-red/20 bg-neutral-900 py-8 px-4">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-2 text-center md:flex-row md:justify-between md:text-left">
           <div>
-            <p className="font-display tracking-widest text-union-gold text-sm">EARN WHILE YOU TRAIN</p>
-            <p className="mt-1 text-xs text-union-muted">Complete quests. Unlock discounts. Rep the Union.</p>
+            <p className="font-display tracking-widest text-muay-red text-sm">EARN WHILE YOU TRAIN</p>
+            <p className="mt-1 text-xs text-neutral-500">Complete quests. Unlock discounts. Rep the Union.</p>
           </div>
-          <div className="h-px w-full bg-union-gold/20 md:hidden" />
+          <div className="h-px w-full bg-muay-red/20 md:hidden" />
           <div>
-            <p className="font-display tracking-widest text-union-gold text-sm">CHAPTER NETWORK</p>
-            <p className="mt-1 text-xs text-union-muted">PDC · Tulum · Coming worldwide</p>
+            <p className="font-display tracking-widest text-muay-red text-sm">CHAPTER NETWORK</p>
+            <p className="mt-1 text-xs text-neutral-500">PDC · Tulum · Coming worldwide</p>
           </div>
-          <div className="h-px w-full bg-union-gold/20 md:hidden" />
+          <div className="h-px w-full bg-muay-red/20 md:hidden" />
           <div>
-            <p className="font-display tracking-widest text-union-gold text-sm">FIGHTER PASSPORT</p>
-            <p className="mt-1 text-xs text-union-muted">Your training history. Verified. Portable.</p>
+            <p className="font-display tracking-widest text-muay-red text-sm">FIGHTER PASSPORT</p>
+            <p className="mt-1 text-xs text-neutral-500">Your training history. Verified. Portable.</p>
           </div>
         </div>
       </div>
 
-      <footer className="border-t border-union-gold/20 bg-union-panel text-union-muted">
+      <footer className="border-t border-muay-red/20 bg-neutral-900 text-neutral-500">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-12 text-sm md:flex-row md:gap-12 md:px-4 xl:px-0">
           <div>
             <Link className="flex items-center gap-3 md:pt-1" href="/">
               <LogoSquare size="sm" />
-              <span className="font-display tracking-[0.18em] text-union-gold">{SITE_NAME}</span>
+              <span className="font-display tracking-[0.18em] text-muay-red">The Union Muay Thai <span className="font-teko">&</span> Boxing Gym</span>
             </Link>
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-union-muted">
-              Playa del Carmen&apos;s original fight gym. Train hard. Represent.
+            <p className="mt-3 max-w-xs text-xs leading-relaxed text-neutral-500">
+              Est. 2012. Old-School Muay Thai &amp; Boxing. Playa del Carmen.
             </p>
           </div>
           <FooterMenu menu={menu.map((m) => ({ title: m?.title ?? '', path: m?.path ?? '#' }))} />
@@ -188,18 +188,18 @@ export default function HomePageClient() {
               href="https://hh-pdc-wsyc.vercel.app/playa-map.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded border border-union-gold/30 px-4 py-1.5 font-display tracking-widest text-xs text-union-gold transition-colors hover:bg-union-gold hover:text-union-black"
+              className="rounded border border-muay-red/30 px-4 py-1.5 font-display tracking-widest text-xs text-muay-red transition-colors hover:bg-muay-red hover:text-neutral-950"
             >
               FIND US ON THE MAP →
             </a>
           </div>
         </div>
-        <div className="border-t border-union-gold/10 py-5 text-xs">
+        <div className="border-t border-muay-red/10 py-5 text-xs">
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-1 px-4 md:flex-row md:gap-0">
-            <p className="text-union-muted">
+            <p className="text-neutral-500">
               &copy; {currentYear} {SITE_NAME}. All rights reserved. Playa del Carmen, Mexico.
             </p>
-            <p className="md:ml-auto text-union-muted/50">
+            <p className="md:ml-auto text-neutral-500/50">
               Built on OASIS · Powered by Medusa
             </p>
           </div>

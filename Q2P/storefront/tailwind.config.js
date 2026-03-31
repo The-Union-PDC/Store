@@ -6,18 +6,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'union-black':  '#0d0d0d',
-        'union-panel':  '#141414',
-        'union-gold':   '#c49937',
-        'union-gold-bright': '#e2b84c',
-        'union-red':    '#9b1c1c',
-        'union-text':   '#f2ede4',
-        'union-muted':  '#7a6e65',
-        'union-border': 'rgba(196,153,55,0.22)',
+        'neutral-950':  '#0a0a0a',
+        'neutral-900':  '#171717',
+        'muay-red':     '#DC2626',
+        'muay-red-bright': '#EF4444',
+        'red-900':      '#7F1D1D',
+        'neutral-500':  '#737373',
+        'muay-border':  'rgba(220,38,38,0.22)',
       },
       fontFamily: {
-        display: ['var(--font-bebas)', 'Impact', 'sans-serif'],
-        sans:    ['var(--font-barlow)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-banditos)', 'Impact', 'sans-serif'],
+        teko:    ['var(--font-teko)', 'sans-serif'],
+        sans:    ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         fadeIn: {

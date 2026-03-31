@@ -221,7 +221,7 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                   })()}
                   <a
                     href="/checkout"
-                    className="block w-full rounded bg-union-gold p-3 text-center font-display tracking-widest text-sm text-union-black opacity-90 hover:opacity-100"
+                    className="block w-full rounded bg-muay-red p-3 text-center font-display tracking-widest text-sm text-neutral-950 opacity-90 hover:opacity-100"
                   >
                     PROCEED TO CHECKOUT →
                   </a>
